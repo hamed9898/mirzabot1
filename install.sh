@@ -190,31 +190,33 @@ function fix_update_issues() {
     echo -e "\e[33mTrying to fix update issues by changing mirrors...\033[0m"
     # Backup original sources.list
     cp /etc/apt/sources.list /etc/apt/sources.list.backup
+    
     # Detect Ubuntu version
     if [ -f /etc/os-release ]; then
-        . /etc/apt/sources.list
         VERSION_ID=$(cat /etc/os-release | grep VERSION_ID | cut -d '"' -f2)
         UBUNTU_CODENAME=$(cat /etc/os-release | grep UBUNTU_CODENAME | cut -d '=' -f2)
     else
         echo -e "\e[91mCould not detect Ubuntu version.\033[0m"
         return 1
     fi
-    # Try different mirrors
+
+    # Try different mirrors (Iranian mirrors added)
     MIRRORS=(
-        "archive.ubuntu.com"
-        "us.archive.ubuntu.com"
-        "fr.archive.ubuntu.com"
-        "de.archive.ubuntu.com"
-        "mirrors.digitalocean.com"
-        "mirrors.linode.com"
+        "https://mirror.parsvds.com/ubuntu/"
+        "http://mirror-linux.runflare.com/ubuntu/"
+        "http://mirror.shatel.ir/ubuntu/"
+        "http://mirror.arvancloud.ir/ubuntu/"
+        "http://linux-mirror.liara.ir/repository/ubuntu/"
+        "http://archive.ubuntu.com/ubuntu/"
     )
+    
     for mirror in "${MIRRORS[@]}"; do
         echo -e "\e[33mTrying mirror: $mirror\033[0m"
         # Create new sources.list
         cat > /etc/apt/sources.list << EOF
-deb http://$mirror/ubuntu/ $UBUNTU_CODENAME main restricted universe multiverse
-deb http://$mirror/ubuntu/ $UBUNTU_CODENAME-updates main restricted universe multiverse
-deb http://$mirror/ubuntu/ $UBUNTU_CODENAME-security main restricted universe multiverse
+deb $mirror $UBUNTU_CODENAME main restricted universe multiverse
+deb $mirror $UBUNTU_CODENAME-updates main restricted universe multiverse
+deb $mirror $UBUNTU_CODENAME-security main restricted universe multiverse
 EOF
         # Try updating
         if apt-get update 2>/dev/null; then
@@ -222,9 +224,9 @@ EOF
             return 0
         fi
     done
-    # If all mirrors fail, restore original sources.list
-    mv /etc/apt/sources.list.backup /etc/apt/sources.list
-    echo -e "\e[91mAll mirrors failed. Restored original sources.list\033[0m"
+    
+    echo -e "\e[91mFailed to update using any mirror. Restoring backup...\033[0m"
+    cp /etc/apt/sources.list.backup /etc/apt/sources.list
     return 1
 }
 # Install Function for Mirza Pro
