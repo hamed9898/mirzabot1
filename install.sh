@@ -525,21 +525,21 @@ EOF
         exit 1
     }
 # بخش تولید SSL کامنت شد تا از خطای اتصال جلوگیری شود
-    # sudo certbot certonly --standalone --agree-tos --preferred-challenges http -d $DOMAIN_NAME || {
-    #     echo -e "\e[91mError: Failed to generate SSL certificate.\033[0m"
-    #     exit 1
-    # }
+     sudo certbot certonly --standalone --agree-tos --preferred-challenges http -d $DOMAIN_NAME || {
+         echo -e "\e[91mError: Failed to generate SSL certificate.\033[0m"
+         exit 1
+     }
     
     sudo apt install python3-certbot-apache -y || {
         echo -e "\e[91mError: Failed to install python3-certbot-apache.\033[0m"
         exit 1
     }
 
-    # این خط هم کامنت شد چون شما SSL را دارید
-    # sudo certbot --apache --agree-tos --preferred-challenges http -d $DOMAIN_NAME || {
-    #     echo -e "\e[91mError: Failed to configure SSL with Certbot.\033[0m"
-    #     exit 1
-    # }
+     این خط هم کامنت شد چون شما SSL را دارید
+     sudo certbot --apache --agree-tos --preferred-challenges http -d $DOMAIN_NAME || {
+         echo -e "\e[91mError: Failed to configure SSL with Certbot.\033[0m"
+         exit 1
+     }
     echo " "
     echo -e "\033[33mEnable apache2\033[0m"
     wait
